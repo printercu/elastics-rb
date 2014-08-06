@@ -4,6 +4,8 @@ module Elastics
 
     autoload :ModelSchema
     autoload :HelperMethods
+    autoload :Instrumentation
+    autoload :LogSubscriber
 
     def elastics_config
       @elastics_config ||= connection_config[:elastics].try!(:with_indifferent_access) ||
@@ -21,6 +23,7 @@ module Elastics
 
       extend ModelSchema
       include HelperMethods
+      extend Instrumentation
 
       self.elastics_index_name  = options[:index] if options[:index]
       self.elastics_type_name   = options[:type]  if options[:type]

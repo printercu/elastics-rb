@@ -4,9 +4,9 @@ module Elastics
       extend ActiveSupport::Concern
 
       module ClassMethods
-        def search(data)
-          es_results = search_elastics(data).with_indifferent_access
-          ids = es_results[:hits][:hits].map { |x| x[:_id].to_i }
+        def search(data = {}, routing = nil)
+          es_results = search_elastics(data, routing)
+          ids = es_results['hits'.freeze]['hits'.freeze].map { |x| x['_id'.freeze].to_i }
           relation = where(id: ids)
           items_by_id = relation.index_by(&:id)
           collection = ids.map { |i| items_by_id[i] }
@@ -17,19 +17,29 @@ module Elastics
           }
         end
 
-        def search_elastics(data)
-          request_elastics(id: :_search, data: data)
+        def search_elastics(data = {}, routing = nil)
+          request = {
+            id: :_search,
+            data: data,
+          }
+          request[:query] = {routing: routing} if routing
+          request_elastics(request)
         end
 
         def request_elastics(params)
-          elastics.request(params.merge(
+          request = {
             index:  elastics_index_name,
             type:   elastics_type_name,
-          ))
+          }.merge!(params)
+          elastics.request(request)
         end
 
         def elastics_mapping
           request_elastics(method: :get, id: :_mapping)
+        end
+
+        def reindex(*args)
+          find_each(*args, &:index_elastics)
         end
       end
 

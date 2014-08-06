@@ -26,12 +26,13 @@ module Elastics
         @elastics_type_name = compute_elastics_type_name
       end
 
-      def compute_elastics_index_name(name = table_name)
-        elastics_config[:index] || "#{elastics_config[:index_prefix]}#{name}"
+      def compute_elastics_index_name(name = nil)
+        elastics_config[:index] ||
+          "#{elastics_config[:index_prefix]}#{name || table_name.singularize}"
       end
 
       def compute_elastics_type_name
-        model_name.to_s.demodulize.underscore
+        model_name.to_s.demodulize.underscore.singularize
       end
     end
   end

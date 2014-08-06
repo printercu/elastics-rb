@@ -46,7 +46,10 @@ module Elastics
       res = @client.request(http_method, uri(params), params[:query], body, HEADERS)
       status = res.status
       return JSON.parse(res.body) if 300 > status
-      raise NotFound if 404 == status
+      if 404 == status
+        message = JSON.parse(res.body)['error'] rescue 'Not found'
+        raise NotFound, message
+      end
       raise Error.new(res.reason)
     end
 

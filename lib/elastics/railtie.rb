@@ -14,5 +14,3 @@ module Elastics
     end
   end
 end
-
-Elastics::Railtie.run_initializers

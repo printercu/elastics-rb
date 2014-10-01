@@ -2,6 +2,7 @@ module Elastics
   module ActiveRecord
     extend ActiveSupport::Autoload
 
+    autoload :SearchResult
     autoload :ModelSchema
     autoload :HelperMethods
     autoload :Instrumentation
@@ -19,7 +20,7 @@ module Elastics
     def indexed_with_elastics(options = {})
       options = {
         hooks: [:update, :destroy],
-      }.merge(options)
+      }.merge!(options)
 
       extend ModelSchema
       include HelperMethods

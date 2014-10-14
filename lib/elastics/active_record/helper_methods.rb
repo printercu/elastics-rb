@@ -3,6 +3,10 @@ module Elastics
     module HelperMethods
       extend ActiveSupport::Concern
 
+      included do
+        alias_method :to_elastics, :as_json unless instance_methods.include?(:to_elastics)
+      end
+
       module ClassMethods
         def request_elastics(params)
           request = {
@@ -43,10 +47,6 @@ module Elastics
 
       def delete_elastics
         self.class.request_elastics(method: :delete, id: id)
-      end
-
-      def to_elastics
-        as_json
       end
     end
   end

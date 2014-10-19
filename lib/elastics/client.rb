@@ -46,25 +46,40 @@ module Elastics
       res = @client.request(http_method, uri(params), params[:query], body, HEADERS)
       status = res.status
       return JSON.parse(res.body) if 300 > status
-      if 404 == status
-        message = JSON.parse(res.body)['error'] rescue 'Not found'
-        raise NotFound, message
-      end
-      raise Error.new(res.reason)
+      result = JSON.parse(res.body) rescue nil
+      err_msg = "#{res.reason}: #{result && result['error'] || '-'}"
+      # NotFound is raised only for valid responses from ElasticSearch
+      raise NotFound, err_msg if 404 == status && result
+      raise Error, err_msg
     end
 
     # shortcuts
-    [:put, :post, :delete].each do |method|
+    [:put, :post].each do |method|
       define_method(method) do |params|
         params[:method] = method
         request params
       end
     end
 
-    def get(params)
+    def delete!(params)
+      params[:method] = :delete
+      request params
+    end
+
+    def delete(params)
+      delete!(params)
+    rescue NotFound
+    end
+
+    def get!(params)
       params = {id: params} unless params.is_a?(Hash)
       params[:method] = :get
       request(params)
+    end
+
+    def get(params)
+      get!(params)
+    rescue NotFound
     end
 
     def set(id, data)
@@ -88,10 +103,7 @@ module Elastics
     end
 
     def index_exists?(index)
-      get(index: index, type: nil, id: :_mapping)
-      true
-    rescue NotFound
-      false
+      !!get(index: index, type: nil, id: :_mapping)
     end
   end
 end

@@ -1,6 +1,16 @@
 module Elastics
   module ActiveRecord
     module ModelSchema
+      class << self
+        def track_model(model)
+          Elastics.models << model unless model.abstract_class?
+        end
+
+        def extended(base)
+          track_model(base)
+        end
+      end
+
       attr_writer :elastics_index_name, :elastics_type_name
 
       def elastics_index_name
@@ -33,6 +43,10 @@ module Elastics
 
       def compute_elastics_type_name
         model_name.to_s.demodulize.underscore.singularize
+      end
+
+      def inherited(base)
+        super.tap { ::Elastics::ActiveRecord::ModelSchema.track_model(base) }
       end
     end
   end

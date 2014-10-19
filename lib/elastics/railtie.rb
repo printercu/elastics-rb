@@ -12,5 +12,9 @@ module Elastics
     rake_tasks do
       load 'tasks/elastics.rake'
     end
+
+    config.to_prepare do
+      Elastics.reset_models
+    end
   end
 end

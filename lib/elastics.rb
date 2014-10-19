@@ -8,6 +8,16 @@ module Elastics
   autoload :Tasks, 'elastics/tasks'
 
   extend QueryHelper
+
+  class << self
+    attr_reader :models
+
+    def reset_models
+      @models = []
+    end
+  end
+
+  reset_models
 end
 
 require 'elastics/railtie' if defined?(Rails)

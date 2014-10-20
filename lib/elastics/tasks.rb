@@ -9,6 +9,9 @@ module Elastics
     require 'elastics/tasks/mappings'
     include Mappings
 
+    require 'elastics/tasks/migrations'
+    include Migrations
+
     extend self
 
     attr_writer :base_paths, :client, :config
@@ -17,14 +20,12 @@ module Elastics
       @base_paths ||= [File.join(Rails.root, 'db', 'elastics')]
     end
 
-    def migrate(options = {})
-      delete_indices if options[:flush]
-      create_indices
-      put_mappings
-    end
-
     def client
       @client ||= ::ActiveRecord::Base.elastics
+    end
+
+    def version_manager
+      @version_manager ||= client.version_manager config[:service_index]
     end
 
     def config
@@ -32,7 +33,14 @@ module Elastics
     end
 
     def log(*args)
-      Rails.logger.info(*args)
+      puts(*args)
     end
+
+    private
+      def each_filtered(collection, filter, &block)
+        filter = filter && filter.map(&:to_s)
+        collection = collection.select { |x| filter.include?(x) } if filter
+        collection.each &block
+      end
   end
 end

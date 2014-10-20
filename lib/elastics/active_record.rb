@@ -26,7 +26,7 @@ module Elastics
       include HelperMethods
       extend Instrumentation
 
-      self.elastics_index_name  = options[:index] if options[:index]
+      self.elastics_index_base  = options[:index] if options[:index]
       self.elastics_type_name   = options[:type]  if options[:type]
 
       hooks = options[:hooks]

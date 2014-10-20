@@ -3,6 +3,7 @@ module Elastics
   class NotFound < Error; end
 
   require 'elastics/client'
+  require 'elastics/version_manager'
   require 'elastics/query_helper'
 
   autoload :Tasks, 'elastics/tasks'

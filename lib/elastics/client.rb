@@ -30,13 +30,13 @@ module Elastics
 
     def uri(params)
       str = "http://#{@host}:#{@port}"
-      if index = params[:index]  || @index
-        str += "/#{index}"
-        type  = params[:type]   || @type
-        str += "/#{type}" if type
+      if index = params[:index] || @index
+        str << "/#{index}"
+        type = params[:type] || @type
+        str << "/#{type}" if type
       end
       path = params[:id]
-      str += "/#{path}" if path
+      str << "/#{path}" if path
       str
     end
 
@@ -104,6 +104,10 @@ module Elastics
 
     def index_exists?(index)
       !!get(index: index, type: nil, id: :_mapping)
+    end
+
+    def version_manager(*args)
+      VersionManager.new self, *args
     end
   end
 end

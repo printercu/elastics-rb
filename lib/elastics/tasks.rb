@@ -1,3 +1,6 @@
+require 'active_support'
+require 'active_support/core_ext'
+
 module Elastics
   module Tasks
     require 'elastics/tasks/indices'

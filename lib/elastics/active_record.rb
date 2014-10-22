@@ -17,6 +17,14 @@ module Elastics
       @elastics ||= Client.new elastics_config.slice(:host, :port)
     end
 
+    # Don't memoize to GC it after initialization
+    def elastics_version_manager
+      VersionManager.new(elastics, elastics_config.slice(
+        :service_index,
+        :index_prefix,
+      ))
+    end
+
     def indexed_with_elastics(options = {})
       options = {
         hooks: [:update, :destroy],

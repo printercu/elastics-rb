@@ -29,8 +29,7 @@ module Elastics
       end
 
       def compute_elastics_index_name
-        index = "#{elastics_config[:index_prefix]}#{elastics_index_base}"
-        elastics.version_manager.index_name index
+        elastics_version_manager.index_name(elastics_index_base)
       end
 
       def elastics_index_base

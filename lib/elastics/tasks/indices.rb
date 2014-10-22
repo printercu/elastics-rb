@@ -26,7 +26,7 @@ module Elastics
       end
 
       def versioned_index_name(*args)
-        "#{config[:index_prefix]}#{version_manager.index_name *args}"
+        version_manager.index_name *args
       end
 
       def purge(keep_data = false)
@@ -36,6 +36,7 @@ module Elastics
         end
         index = version_manager.service_index
         log "Deleting index #{index}"
+        version_manager.reset
         client.delete index: index
       end
 

@@ -105,9 +105,5 @@ module Elastics
     def index_exists?(index)
       !!get(index: index, type: nil, id: :_mapping)
     end
-
-    def version_manager(*args)
-      VersionManager.new self, *args
-    end
   end
 end

@@ -22,10 +22,15 @@ module Elastics
 
     attr_reader :service_index
 
-    def initialize(client, service_index = nil)
-      @service_index = service_index
-      @service_index = '.elastics' if @service_index.blank?
+    def initialize(client, options = {})
+      @service_index = options[:service_index] || '.elastics'
+      @index_prefix = options[:index_prefix]
       @client = client
+    end
+
+    def reset
+      @versions = nil
+      self
     end
 
     def update(index, data)
@@ -33,15 +38,15 @@ module Elastics
     end
 
     def set(index, data)
-      @client.post index: @service_index, type: :mapping_versions, id: index,
-        data: data
+      @client.post index: @service_index, type: :mapping_versions,
+        id: prefixed_index(index), data: data
       @versions[index] = data.with_indifferent_access
     end
 
     def versions
       @versions ||= Hash.new do |hash, index|
         result = @client.get index: @service_index, type: :mapping_versions,
-          id: index
+          id: prefixed_index(index)
         if result
           hash[index] = result['_source'].with_indifferent_access
         else
@@ -66,11 +71,15 @@ module Elastics
       end
     end
 
+    def prefixed_index(index)
+      "#{@index_prefix}#{index}"
+    end
+
     def index_name(index, version = self.class.default_version)
       if version && version != :alias
-        "#{index}-v#{version_number index, version}"
+        "#{prefixed_index(index)}-v#{version_number index, version}"
       else
-        index
+        prefixed_index(index)
       end
     end
   end

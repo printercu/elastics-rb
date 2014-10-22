@@ -45,6 +45,12 @@ module Elastics
         self.class.request_elastics(method: :post, id: id, data: to_elastics)
       end
 
+      def update_elastics(fields)
+        self.class.request_elastics(method: :post, id: "#{id}/_update", data: {
+          doc: fields
+        })
+      end
+
       def delete_elastics
         self.class.request_elastics(method: :delete, id: id)
       end

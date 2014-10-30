@@ -70,7 +70,7 @@ class User < ActiveRecord::Base
 end
 
 User.search_elastics(data)
-# Returns Elastics::ActiveRecord::SearchResult object with some useful methods 
+# Returns Elastics::ActiveRecord::SearchResult object with some useful methods
 ```
 
 #### Configure
@@ -134,6 +134,20 @@ performs full migration.
 
 - `rake elastics:reindex` (`.reindex`)
 reindexes data.
+
+#### Using without Rails
+You need to setup `Elastics::Tasks` yourself. This can be done in `environment` or
+`db:load_config` rake tasks.
+
+```ruby
+task :environment do
+  Elastics::Tasks.base_paths = '/path/to/your/elastics/folder'
+  Elastics::Tasks.config = your_configuration
+end
+```
+
+Also you need to install `active_support` & require
+`active_support/core_ext/object` to be able to run tasks.
 
 ### Use with capistrano
 Add following lines to your `deploy.rb` and all rake tasks will be available in cap.

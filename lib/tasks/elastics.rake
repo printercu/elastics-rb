@@ -1,5 +1,8 @@
 namespace 'elastics' do
-  task load_config: [:environment, 'db:load_config'] do |task, args|
+  task :load_config do |task, args|
+    [:environment, 'db:load_config'].each do |dep|
+      Rake::Task[dep].invoke if Rake::Task.task_defined?(dep)
+    end
     @elastics_options = {
       version:  ENV['version'] || :current,
       reindex:  !ENV.key?('no_reindex'),

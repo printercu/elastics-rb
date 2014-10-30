@@ -3,6 +3,9 @@ require 'active_support/core_ext'
 
 module Elastics
   module Tasks
+    require 'elastics/tasks/config'
+    include Config
+
     require 'elastics/tasks/indices'
     include Indices
 
@@ -12,35 +15,12 @@ module Elastics
     require 'elastics/tasks/migrations'
     include Migrations
 
+    if defined?(::ActiveRecord) && defined?(::Elastics::ActiveRecord)
+      require 'elastics/active_record/tasks_config'
+      include ActiveRecord::TasksConfig
+    end
+
     extend self
-
-    attr_writer :base_paths
-
-    def base_paths
-      @base_paths ||= [File.join(Rails.root, 'db', 'elastics')]
-    end
-
-    def client
-      @client ||= ::ActiveRecord::Base.elastics
-    end
-
-    def client=(val)
-      @version_manager = nil
-      @client = val
-    end
-
-    def version_manager
-      @version_manager ||= ::ActiveRecord::Base.elastics_version_manager
-    end
-
-    def config
-      @config ||= ::ActiveRecord::Base.elastics_config
-    end
-
-    def config=(val)
-      @version_manager = nil
-      @config = val
-    end
 
     def log(*args)
       puts(*args)

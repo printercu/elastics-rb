@@ -1,6 +1,7 @@
 # elastics
 [![Gem Version](https://badge.fury.io/rb/elastics.svg)](http://badge.fury.io/rb/elastics)
 [![Code Climate](https://codeclimate.com/github/printercu/elastics-rb/badges/gpa.svg)](https://codeclimate.com/github/printercu/elastics-rb)
+[![Build Status](https://travis-ci.org/printercu/elastics-rb.svg)](https://travis-ci.org/printercu/elastics-rb)
 
 Simple ElasticSearch client.
 - basic API only

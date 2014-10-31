@@ -8,8 +8,7 @@ module Elastics
     attr_reader :client
 
     def initialize(defaults = {})
-      @host = defaults[:host] || '127.0.0.1'
-      @port = defaults[:port] || 9200
+      @host = defaults[:host] || '127.0.0.1:9200'
       @index  = defaults[:index]
       @type   = defaults[:type]
       @client = HTTPClient.new
@@ -28,8 +27,8 @@ module Elastics
       @type  = type  || nil
     end
 
-    def uri(params)
-      str = "http://#{@host}:#{@port}"
+    def request_path(params)
+      str = ""
       if index = params[:index] || @index
         str << "/#{index}"
         type = params[:type] || @type
@@ -41,9 +40,9 @@ module Elastics
     end
 
     def request(params)
-      http_method = params[:method] || :get
+      method = params[:method] || :get
       body = params[:data].try!(:to_json)
-      res = @client.request(http_method, uri(params), params[:query], body, HEADERS)
+      res = http_request(method, request_path(params), params[:query], body, params)
       status = res.status
       return JSON.parse(res.body) if 300 > status
       result = JSON.parse(res.body) rescue nil
@@ -105,5 +104,14 @@ module Elastics
     def index_exists?(index)
       !!get(index: index, type: nil, id: :_mapping)
     end
+
+    private
+      # Endpoint for low-level request. For easy host highjacking & instrumentation.
+      # Params are not used directly but kept for instrumentation purpose.
+      # You probably don't want to use this method directly.
+      def http_request(method, path, query, body, params = nil, host = @host)
+        uri = "http://#{host}#{path}"
+        @client.request(method, uri, query, body, HEADERS)
+      end
   end
 end

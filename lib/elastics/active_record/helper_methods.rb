@@ -12,6 +12,7 @@ module Elastics
           request = {
             index:  elastics_index_name,
             type:   elastics_type_name,
+            model:  self,
           }.merge!(params)
           elastics.request(request)
         end

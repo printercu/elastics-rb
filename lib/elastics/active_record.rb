@@ -6,7 +6,17 @@ module Elastics
     autoload :ModelSchema
     autoload :HelperMethods
     autoload :Instrumentation
-    autoload :LogSubscriber
+    autoload :LogSubscriber, 'elastics/active_record/instrumentation'
+
+    class << self
+      def install
+        ::ActiveRecord::Base.extend self
+        Client.prepend Instrumentation
+        unless ::ActiveRecord::LogSubscriber < LogSubscriber
+          ::ActiveRecord::LogSubscriber.send :include, LogSubscriber
+        end
+      end
+    end
 
     def elastics_config
       @elastics_config ||= connection_config[:elastics].try!(:with_indifferent_access) ||
@@ -32,7 +42,6 @@ module Elastics
 
       extend ModelSchema
       include HelperMethods
-      extend Instrumentation
 
       self.elastics_index_base  = options[:index] if options[:index]
       self.elastics_type_name   = options[:type]  if options[:type]

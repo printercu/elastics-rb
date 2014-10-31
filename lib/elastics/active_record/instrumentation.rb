@@ -2,9 +2,37 @@ module Elastics
   module ActiveRecord
     # To be included in `Elastics::Client`
     module Instrumentation
+      class << self
+        def install
+          if Client.respond_to?(:prepend)
+            Client.prepend self
+          else
+            Client.include Fallback
+          end
+          unless ::ActiveRecord::LogSubscriber < LogSubscriber
+            ::ActiveRecord::LogSubscriber.send :include, LogSubscriber
+          end
+        end
+      end
+
       def http_request(*args)
         ActiveSupport::Notifications.instrument 'request_elastics.active_record', args: args do
           super
+        end
+      end
+
+      # old rubies support
+      module Fallback
+        extend ActiveSupport::Concern
+
+        included do
+          alias_method_chain :http_request, :instrumentation
+        end
+
+        def http_request_with_instrumentation(*args)
+          ActiveSupport::Notifications.instrument 'request_elastics.active_record', args: args do
+            http_request_without_instrumentation(*args)
+          end
         end
       end
     end

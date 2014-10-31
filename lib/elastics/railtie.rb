@@ -3,7 +3,7 @@ require 'elastics/active_record'
 module Elastics
   class Railtie < Rails::Railtie
     initializer 'elastics.configure_rails_initialization' do
-      Elastics::ActiveRecord.install
+      ActiveRecord.install
     end
 
     rake_tasks do

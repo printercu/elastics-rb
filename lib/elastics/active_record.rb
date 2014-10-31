@@ -11,10 +11,7 @@ module Elastics
     class << self
       def install
         ::ActiveRecord::Base.extend self
-        Client.prepend Instrumentation
-        unless ::ActiveRecord::LogSubscriber < LogSubscriber
-          ::ActiveRecord::LogSubscriber.send :include, LogSubscriber
-        end
+        Instrumentation.install
       end
     end
 

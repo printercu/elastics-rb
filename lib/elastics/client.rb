@@ -4,11 +4,18 @@ module Elastics
   class Client
     HEADERS = {'Content-Type' => 'application/json'}
 
+    autoload :Cluster, 'elastics/client/cluster'
+
     attr_writer :index, :type
     attr_reader :client
 
     def initialize(defaults = {})
-      @host = defaults[:host] || '127.0.0.1:9200'
+      if defaults[:host].is_a?(Array)
+        extend Cluster
+        initialize_cluster(defaults)
+      else
+        @host = defaults[:host] || '127.0.0.1:9200'
+      end
       @index  = defaults[:index]
       @type   = defaults[:type]
       @client = HTTPClient.new

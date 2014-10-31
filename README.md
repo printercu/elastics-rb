@@ -26,10 +26,11 @@ gem 'elastics', github: 'printercu/elastics-rb'
 # initialize client with
 client = Elastics::Client.new(options)
 # options is hash with
-#   :host
-#   :port
+#   :host   - hostname with port or array with hosts (default 127.0.0.1:9200)
 #   :index  - (default index)
 #   :type   - (default type)
+#   :connect_timeout    - timeout to mark the host as dead in cluster-mode (default 10)
+#   :resurrect_timeout  - timeout to mark dead host as alive in cluster-mode (default 10)
 
 # basic request
 client.request(options)
@@ -55,6 +56,8 @@ client.index(params) # PUT if :id is set, otherwise POST
 # utils
 client.index_exists?(name)
 ```
+
+When using cluster-mode you should also install `gem 'thread_safe'`.
 
 ### ActiveRecord
 
@@ -86,8 +89,11 @@ development:
 
 production:
   elastics:
-    host: 10.0.0.1
-    port: 1234
+    host: 10.0.0.1:1234
+    # or
+    host:
+      - 10.0.0.1:1234
+      - 10.0.0.2:1234
 
     index: app
     # or

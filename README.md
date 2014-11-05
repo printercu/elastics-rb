@@ -170,5 +170,8 @@ Indices & rake options can be passed like this:
 cap --dry-run elastics:migrate INDICES=index1,index2 ES_OPTIONS='full=true no_drop=true'
 ```
 
+## Other versions
+[elastics for node.js](https://github.com/printercu/elastics)
+
 ## License
 MIT

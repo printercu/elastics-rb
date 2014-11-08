@@ -10,7 +10,7 @@ module Elastics
 
       def enabled=(value)
         value = !!value
-        Client.include(self) if value && !Client.include?(self)
+        Client.send(:include, self) if value && !Client.include?(self)
         Thread.current[:elastics_test_mode] = value
       end
 

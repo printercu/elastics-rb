@@ -58,7 +58,7 @@ module Elastics
           log_msg << ' - Skipping: exists' if exists
           log log_msg
           unless exists
-            client.put(index: versioned_index, data: indices_settings[index])
+            client.put(index: versioned_index, body: indices_settings[index])
           end
         end
         manage_aliases :add, options if version.to_s == 'current'
@@ -97,7 +97,7 @@ module Elastics
       def post_aliases(options = {}, &block)
         actions = each_filtered(indices, options[:indices]).map(&block).flatten
         log "Posting aliases: #{actions.inspect}"
-        client.post id: :_aliases, data: {actions: actions} if actions.any?
+        client.post id: :_aliases, body: {actions: actions} if actions.any?
       end
     end
   end

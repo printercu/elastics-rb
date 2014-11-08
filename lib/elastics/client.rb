@@ -6,6 +6,9 @@ module Elastics
 
     autoload :Cluster, 'elastics/client/cluster'
 
+    require 'elastics/client/bulk'
+    include Bulk
+
     attr_writer :index, :type
     attr_reader :client
 
@@ -46,9 +49,10 @@ module Elastics
       str
     end
 
-    def request(params)
+    def request(params = {})
       method = params[:method] || :get
-      body = params[:data].try!(:to_json)
+      body = params[:body]
+      body = body.to_json if body && !body.is_a?(String)
       res = http_request(method, request_path(params), params[:query], body, params)
       status = res.status
       return JSON.parse(res.body) if 300 > status
@@ -90,7 +94,7 @@ module Elastics
     end
 
     def set(id, data)
-      request(id: id, data: data, method: :put)
+      request(id: id, body: data, method: :put)
     end
 
     def put_mapping(params)

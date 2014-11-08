@@ -39,7 +39,7 @@ module Elastics
 
     def set(index, data)
       @client.post index: @service_index, type: :mapping_versions,
-        id: prefixed_index(index), data: data
+        id: prefixed_index(index), body: data
       @versions[index] = data.with_indifferent_access
     end
 

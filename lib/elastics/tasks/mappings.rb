@@ -17,7 +17,7 @@ module Elastics
           versioned_index = versioned_index_name(index, version)
           log "Putting mapping #{index}/#{type} (#{versioned_index}/#{type})"
           client.put_mapping index: versioned_index, type: type,
-            data: mappings[type]
+            body: mappings[type]
         end
       end
 

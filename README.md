@@ -38,7 +38,7 @@ client = Elastics::Client.new(options)
 client.request(options)
 # options is hash with
 #   :method - default :get
-#   :data   - post body
+#   :body   - post body
 #   :query  - query string params
 #   :index, :type, :id - query path params to override defaults
 
@@ -51,12 +51,22 @@ client.get(id)
 client.get(params) # as usual
 
 # other shortcuts (set method & id)
-client.put_mapping(index: index, type: type, data: mapping)
+client.put_mapping(index: index, type: type, body: mapping)
 client.search(params)
 client.index(params) # PUT if :id is set, otherwise POST
 
 # utils
 client.index_exists?(name)
+
+# bulk
+client.bulk(params) do |bulk|
+  # if first param is not a Hash it's converted to {_id: param}
+  bulk.index override_params, data
+  bulk.create id, data
+  bulk.update id, script
+  bulk.update_doc id, fields
+  bulk.delete id
+end
 ```
 
 When using cluster-mode you should also install `gem 'thread_safe'`.

@@ -8,19 +8,26 @@ module Elastics
       end
 
       module ClassMethods
-        def request_elastics(params)
-          request = {
+        def elastics_params
+          {
             index:  elastics_index_name,
             type:   elastics_type_name,
             model:  self,
-          }.merge!(params)
-          elastics.request(request)
+          }
+        end
+
+        def request_elastics(params)
+          elastics.request(elastics_params.merge!(params))
+        end
+
+        def bulk_elastics(params = {}, &block)
+          elastics.bulk(elastics_params.merge!(params), &block)
         end
 
         def search_elastics(data = {}, options = {})
           request = {
             id:   :_search,
-            data: data,
+            body: data,
           }
           if routing = options[:routing]
             request[:query] = {routing: routing}
@@ -37,8 +44,19 @@ module Elastics
           request_elastics(method: :get, id: :_mapping)
         end
 
+        def index_all_elastics(*args)
+          find_in_batches(*args) do |batch|
+            bulk_elastics do |bulk|
+              batch.each do |record|
+                bulk.index record.id, record.to_elastics
+              end
+            end
+          end
+        end
+
         def reindex_elastics(*args)
-          find_each(*args, &:index_elastics)
+          scope = respond_to?(:reindex_scope) ? reindex_scope : all
+          scope.index_all_elastics(*args)
         end
 
         def refresh_elastics
@@ -47,13 +65,15 @@ module Elastics
       end
 
       def index_elastics
-        self.class.request_elastics(method: :post, id: id, data: to_elastics)
+        self.class.request_elastics(method: :post, id: id, body: to_elastics)
       end
 
-      def update_elastics(fields)
-        self.class.request_elastics(method: :post, id: "#{id}/_update", data: {
-          doc: fields
-        })
+      def update_elastics(data)
+        self.class.request_elastics(method: :post, id: "#{id}/_update", body: data)
+      end
+
+      def update_elastics_doc(fields)
+        update_elastics(doc: fields)
       end
 
       def delete_elastics

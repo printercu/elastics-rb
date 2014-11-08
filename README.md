@@ -7,6 +7,7 @@ Simple ElasticSearch client.
 - basic API only
 - transparent aliases management & zero-downtime migrations
 - capistrano integration
+- auto refresh in tests
 
 Fast and thread-safe [httpclient](https://github.com/nahi/httpclient) is under the hood.
 
@@ -155,6 +156,21 @@ end
 
 Also you need to install `active_support` & require
 `active_support/core_ext/object` to be able to run tasks.
+
+### Auto refresh index
+Add `Elastics::AutoRefresh.enable!` to your test helper,
+this will run `POST /:index/_refresh` request after each modifying request.
+You can also use it for a block or skip auto refresh after it was enabled:
+
+```ruby
+# enable test mode in rspec's around filter
+around { |ex| Elastics::AutoRefresh.enable! { ex.run } }
+
+# disable auto refresh for block & perform single refresh
+# assume test mode is enabled here
+Elastics::AutoRefresh.disable! { Model.reindex_elastics }
+Model.refresh_elastics
+```
 
 ### Use with capistrano
 Add following lines to your `deploy.rb` and all rake tasks will be available in cap.

@@ -68,6 +68,7 @@ module Elastics
     end
 
     def delete!(params)
+      params = {id: params} unless params.is_a?(Hash)
       params[:method] = :delete
       request params
     end
@@ -110,6 +111,10 @@ module Elastics
 
     def index_exists?(index)
       !!get(index: index, type: nil, id: :_mapping)
+    end
+
+    def refresh(index = nil)
+      request(method: :post, index: index, type: nil, id: :_refresh)
     end
 
     private

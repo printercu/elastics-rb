@@ -6,6 +6,7 @@ module Elastics
   require 'elastics/version_manager'
   require 'elastics/query_helper'
 
+  autoload :AutoRefresh, 'elastics/auto_refresh'
   autoload :Tasks, 'elastics/tasks'
 
   extend QueryHelper

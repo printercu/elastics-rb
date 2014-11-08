@@ -40,6 +40,10 @@ module Elastics
         def reindex_elastics(*args)
           find_each(*args, &:index_elastics)
         end
+
+        def refresh_elastics
+          request_elastics(method: :post, type: nil, id: :_refresh)
+        end
       end
 
       def index_elastics

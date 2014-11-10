@@ -54,9 +54,22 @@ module Elastics
           end
         end
 
-        def reindex_elastics(*args)
+        # Reindexes records with `#index_all_elastics`. If model has scope
+        # named `reindex_scope`, this method will apply it.
+        #
+        # Also supports `:updated_after` option to reindex only updated records.
+        # Nothing is performed when `:updated_after` is set but model
+        # has not `updated_at` column.
+        def reindex_elastics(options = {})
           scope = respond_to?(:reindex_scope) ? reindex_scope : all
-          scope.index_all_elastics(*args)
+          if after = options.delete(:updated_after)
+            if updated_at = arel_table[:updated_at]
+              scope = scope.where(updated_at.gt(after))
+            else
+              return
+            end
+          end
+          scope.index_all_elastics(options)
         end
 
         def refresh_elastics

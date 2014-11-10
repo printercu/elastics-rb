@@ -1,32 +1,14 @@
 module Elastics
   module ActiveRecord
-    class SearchResult
-      attr_reader :result
-
-      def initialize(model, result, options = {})
+    class SearchResult < Result::Search
+      def initialize(model, response, options = {})
         @model = model
-        @result = result
-        @options = options
+        super response, options
       end
 
-      def hits
-        @hits ||= @result['hits'.freeze]
-      end
-
+      # super.map(&:to_i)
       def ids
         @ids ||= hits['hits'.freeze].map { |x| x['_id'.freeze].to_i }
-      end
-
-      def ids_to_find
-        @ids_to_find ||= begin
-          limit = @options[:limit]
-          limit ? ids[0...limit] : ids
-        end
-      end
-
-      def rest_ids
-        limit = @options[:limit]
-        limit ? ids[limit..-1] : []
       end
 
       def collection
@@ -34,15 +16,7 @@ module Elastics
       end
 
       def relation
-        @model.where id: ids_to_find
-      end
-
-      def aggregations
-        @aggregations ||= @result['aggregations'.freeze]
-      end
-
-      def total
-        hits['total'.freeze]
+        @model.where(id: ids_to_find)
       end
     end
   end

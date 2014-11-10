@@ -1,3 +1,4 @@
+require 'json'
 require 'httpclient'
 
 module Elastics
@@ -103,10 +104,10 @@ module Elastics
       request(params)
     end
 
-    def search(params)
+    def search(params, *args)
       params[:id] = :_search
       params[:method] = :post
-      request(params)
+      Result::Search.new(request(params), *args)
     end
 
     def index(params)

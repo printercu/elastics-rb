@@ -8,6 +8,7 @@ module Elastics
 
   autoload :AutoRefresh, 'elastics/auto_refresh'
   autoload :Tasks, 'elastics/tasks'
+  autoload :Result, 'elastics/result'
 
   extend QueryHelper
 

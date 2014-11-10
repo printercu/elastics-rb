@@ -31,13 +31,13 @@ module Elastics
       end
 
       def included(base)
-        base.send :alias_method, :request_without_test_mode, :request
-        base.send :alias_method, :request, :request_with_test_mode
+        base.send :alias_method, :request_without_auto_refresh, :request
+        base.send :alias_method, :request, :request_with_auto_refresh
       end
     end
 
-    def request_with_test_mode(params)
-      request_without_test_mode(params).tap do
+    def request_with_auto_refresh(params)
+      request_without_auto_refresh(params).tap do
         next unless AutoRefresh.enabled?
         next if SKIP_IDS.include?(params[:id].to_s.downcase)
         next unless METHODS.include?(params[:method].to_s.downcase)

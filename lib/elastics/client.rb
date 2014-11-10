@@ -118,8 +118,13 @@ module Elastics
       !!get(index: index, type: nil, id: :_mapping)
     end
 
-    def refresh(index = nil)
+    def refresh!(index = nil)
       request(method: :post, index: index, type: nil, id: :_refresh)
+    end
+
+    def refresh(*args)
+      refresh!(*args)
+    rescue NotFound
     end
 
     private

@@ -91,6 +91,7 @@ module Elastics
 
       def delete_elastics
         self.class.request_elastics(method: :delete, id: id)
+      rescue NotFound
       end
     end
   end

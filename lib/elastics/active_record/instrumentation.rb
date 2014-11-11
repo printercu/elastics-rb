@@ -7,7 +7,7 @@ module Elastics
           if Client.respond_to?(:prepend)
             Client.prepend self
           else
-            Client.include Fallback
+            Client.send :include, Fallback
           end
           unless ::ActiveRecord::LogSubscriber < LogSubscriber
             ::ActiveRecord::LogSubscriber.send :include, LogSubscriber

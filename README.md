@@ -3,11 +3,12 @@
 [![Code Climate](https://codeclimate.com/github/printercu/elastics-rb/badges/gpa.svg)](https://codeclimate.com/github/printercu/elastics-rb)
 [![Build Status](https://travis-ci.org/printercu/elastics-rb.svg)](https://travis-ci.org/printercu/elastics-rb)
 
-Simple ElasticSearch client.
-- basic API only
-- transparent aliases management & zero-downtime migrations
-- capistrano integration
-- auto refresh in tests
+Simple ElasticSearch client. Everything for deployment & maintaince included.
+- Basic API only
+- Transparent aliases management & zero-downtime migrations
+- Capistrano integration
+- Auto refresh in tests
+- Instrumentation
 
 Fast and thread-safe [httpclient](https://github.com/nahi/httpclient) is under the hood.
 
@@ -15,7 +16,7 @@ Fast and thread-safe [httpclient](https://github.com/nahi/httpclient) is under t
 
 ```ruby
 # Gemfile
-gem 'elastics', '~> 0.2' # use version from the badge above
+gem 'elastics', '~> 0.3' # use version from the badge above
 # or
 gem 'elastics', github: 'printercu/elastics-rb'
 ```
@@ -35,8 +36,8 @@ client = Elastics::Client.new(options)
 #   :resurrect_timeout  - timeout to mark dead host as alive in cluster-mode (default 10)
 
 # basic request
-client.request(options)
-# options is hash with
+client.request(params)
+# params is hash with
 #   :method - default :get
 #   :body   - post body
 #   :query  - query string params
@@ -76,6 +77,7 @@ When using cluster-mode you should also install `gem 'thread_safe'`.
 ```ruby
 class User < ActiveRecord::Base
   indexed_with_elastics
+  # it'll set after_commit callbacks and add helper methods
   # optionally pass :index, :type
 
   # optionally override to export only selected fields
@@ -84,9 +86,14 @@ class User < ActiveRecord::Base
   end
 end
 
+User.elastics # Elastics::Client instance
+User.elastics_params # hash with index & type values for the model
+User.request_elastics(params) # performs request merging params with elastics_params
 User.search_elastics(data)
 # Returns Elastics::ActiveRecord::SearchResult object with some useful methods
 ```
+Check out [HelperMethods](https://github.com/printercu/elastics-rb/blob/master/lib/elastics/active_record/helper_methods.rb)
+for more information.
 
 #### Configure
 ```yml

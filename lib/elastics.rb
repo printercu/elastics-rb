@@ -4,11 +4,12 @@ module Elastics
 
   require 'elastics/client'
 
-  autoload :AutoRefresh,    'elastics/auto_refresh'
-  autoload :Tasks,          'elastics/tasks'
-  autoload :QueryHelper,    'elastics/query_helper'
-  autoload :Result,         'elastics/result'
-  autoload :VersionManager, 'elastics/version_manager'
+  autoload :AutoRefresh,      'elastics/auto_refresh'
+  autoload :Instrumentation,  'elastics/instrumentation'
+  autoload :QueryHelper,      'elastics/query_helper'
+  autoload :Result,           'elastics/result'
+  autoload :Tasks,            'elastics/tasks'
+  autoload :VersionManager,   'elastics/version_manager'
 
   class << self
     attr_reader :models

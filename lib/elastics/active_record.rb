@@ -5,13 +5,11 @@ module Elastics
     autoload :SearchResult
     autoload :ModelSchema
     autoload :HelperMethods
-    autoload :Instrumentation
-    autoload :LogSubscriber, 'elastics/active_record/instrumentation'
 
     class << self
       def install
         ::ActiveRecord::Base.extend self
-        Instrumentation.install
+        Instrumentation::ActiveSupport.install
       end
     end
 

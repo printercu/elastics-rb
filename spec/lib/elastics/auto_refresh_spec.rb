@@ -21,14 +21,14 @@ describe Elastics::AutoRefresh do
       it 'invokes refresh after each request' do
         expect(client).to receive(:refresh).exactly(3).times
         client.post id: 1
-        client.put_mapping type: {fields: {}}
+        client.put_mapping type: :test, body: {fields: {}}
         client.delete id: 2
       end
 
       it 'invokes refresh after each request, not wrapped in .disable! block' do
         expect(client).to receive(:refresh).exactly(2).times
         client.post id: 1
-        described_class.disable! { client.put_mapping type: {fields: {}} }
+        described_class.disable! { client.put_mapping type: :test, body: {fields: {}} }
         client.delete id: 2
       end
     end

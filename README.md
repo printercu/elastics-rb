@@ -189,6 +189,23 @@ Elastics::AutoRefresh.disable! { Model.reindex_elastics }
 Model.refresh_elastics
 ```
 
+### Instrumentation
+Instrumentation works out of box in rails. For pure ruby there is only
+ActiveSupport version (remember to install gem).
+
+```ruby
+# Activate instrumentation (no need for rails)
+Elastics::Instrumentation::ActiveSupport.install
+
+# Activate body prettifier (off by default)
+Elastics::Instrumentation.body_prettifier = true
+# can be
+#   true - JSON.pretty_generate
+#   :ap  - awesome_print
+#   :pp  - pretty_print
+#   Proc - ->(str) { your_prettifier(str) }
+```
+
 ### Use with capistrano
 Add following lines to your `deploy.rb` and all rake tasks will be available in cap.
 

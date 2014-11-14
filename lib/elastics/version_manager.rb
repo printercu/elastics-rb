@@ -8,7 +8,7 @@ module Elastics
 
       def default_version=(version)
         @default_version = version
-        Elastics.models.each &:reset_elastics_index_name
+        Model.list.each &:reset_elastics_index_name
       end
 
       def use_version(version)

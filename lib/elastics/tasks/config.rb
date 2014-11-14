@@ -10,7 +10,7 @@ module Elastics
       end
 
       def client
-        @client ||= Client.new config.slice(:host, :port)
+        @client ||= Client.new config.slice(:host)
       end
 
       def client=(val)

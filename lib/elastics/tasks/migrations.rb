@@ -41,7 +41,7 @@ module Elastics
       def models_to_reindex(options = {})
         indices = options[:indices].try!(:map, &:to_s)
         types = options[:types].try!(:map, &:to_s)
-        models = Elastics.models.select do |model|
+        models = Model.list.select do |model|
           next if indices && !indices.include?(model.elastics_index_base)
           next if types && !types.include?(model.elastics_type_name)
           true

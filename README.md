@@ -72,6 +72,21 @@ end
 
 When using cluster-mode you should also install `gem 'thread_safe'`.
 
+### Models
+Most of ActiveRecord integration functionality is available for plain ruby.
+
+```ruby
+class User
+  include Elastics::Model
+
+  self.elastics_config = {host: 'hostname:port'}
+  # set base & version manager will manage aliases
+  self.elastics_index_base = 'user'
+  self.elastics_type_name = 'user'
+end
+```
+Check out available [HelperMethods](https://github.com/printercu/elastics-rb/blob/master/lib/elastics/model/helper_methods.rb).
+
 ### ActiveRecord
 
 ```ruby
@@ -91,8 +106,13 @@ User.elastics_params # hash with index & type values for the model
 User.request_elastics(params) # performs request merging params with elastics_params
 User.search_elastics(data)
 # Returns Elastics::ActiveRecord::SearchResult object with some useful methods
+
+# Indexing on create/update can be skipped with skip_elastics
+User.skip_elastics { users.each { |x| x.update_attributes(smth: 'not indexed') } }
+user.skip_elastics { user.update_attributes(smth: 'not indexed') }
 ```
-Check out [HelperMethods](https://github.com/printercu/elastics-rb/blob/master/lib/elastics/active_record/helper_methods.rb)
+Check out [Model::HelperMethods](https://github.com/printercu/elastics-rb/blob/master/lib/elastics/model/helper_methods.rb)
+and [AR::HelperMethods](https://github.com/printercu/elastics-rb/blob/master/lib/elastics/active_record/helper_methods.rb)
 for more information.
 
 #### Configure

@@ -13,21 +13,11 @@ module Elastics
       end
     end
 
+    include Model::Connection
+
     def elastics_config
       @elastics_config ||= connection_config[:elastics].try!(:with_indifferent_access) ||
         raise('No elastics configuration in database.yml')
-    end
-
-    def elastics
-      @elastics ||= Client.new elastics_config.slice(:host, :port)
-    end
-
-    # Don't memoize to GC it after initialization
-    def elastics_version_manager
-      VersionManager.new(elastics, elastics_config.slice(
-        :service_index,
-        :index_prefix,
-      ))
     end
 
     def indexed_with_elastics(options = {})
@@ -37,13 +27,22 @@ module Elastics
 
       extend ModelSchema
       include HelperMethods
+      extend Model::Tracking
 
       self.elastics_index_base  = options[:index] if options[:index]
       self.elastics_type_name   = options[:type]  if options[:type]
 
-      hooks = options[:hooks]
-      after_commit :index_elastics, on: [:create, :update] if hooks.include?(:update)
-      after_commit :delete_elastics, on: [:destroy] if hooks.include?(:destroy)
+      install_elastics_hooks(options[:hooks])
     end
+
+    private
+      def install_elastics_hooks(hooks)
+        if hooks.include?(:update)
+          after_commit :index_elastics, on: [:create, :update], unless: :skip_elastics?
+        end
+        if hooks.include?(:destroy)
+          after_commit :delete_elastics, on: [:destroy], unless: :skip_elastics?
+        end
+      end
   end
 end

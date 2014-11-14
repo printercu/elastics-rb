@@ -11,7 +11,7 @@ module Elastics
     end
 
     config.to_prepare do
-      Elastics.reset_models
+      Model.reset_list
     end
   end
 end

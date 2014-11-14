@@ -2,16 +2,25 @@ module Elastics
   module Instrumentation
     autoload :ActiveSupport, 'elastics/instrumentation/active_support'
 
+    PRETTIFIERS = {
+      ap:     ->(str) { prettify_json(str, &:awesome_inspect) },
+      pp:     ->(str) { prettify_json(str, &:pretty_inspect) },
+      true => ->(str) { prettify_json(str, &JSON.method(:pretty_generate)) },
+    }
+
     class << self
-      attr_writer :body_prettifier
+      def body_prettifier=(value)
+        @body_prettifier = case value
+        when Proc, nil, false then value
+        else PRETTIFIERS[value] or raise 'Invalid prettifier'
+        end
+      end
 
       def prettify_body(str)
-        case @body_prettifier
-        when :ap  then prettify_json(str, &:awesome_inspect)
-        when :pp  then prettify_json(str, &:pretty_inspect)
-        when true then prettify_json(str, &JSON.method(:pretty_generate))
-        when Proc then @body_prettifier.call(str)
-        else str
+        if @body_prettifier
+          @body_prettifier.call(str)
+        else
+          str
         end
       end
 

@@ -171,8 +171,7 @@ task :environment do
 end
 ```
 
-Also you need to install `active_support` & require
-`active_support/core_ext/object` to be able to run tasks.
+Also you need to install `active_support` to be able to run tasks.
 
 ### Auto refresh index
 Add `Elastics::AutoRefresh.enable!` to your test helper,

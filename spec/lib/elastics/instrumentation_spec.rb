@@ -43,4 +43,29 @@ describe Elastics::Instrumentation do
       end
     end
   end
+
+  describe '.body_prettifier=' do
+    context 'when new value is false/nil, Proc, or valid prettifier id' do
+      it 'accepts it' do
+        [
+          :ap,
+          true,
+          ->(str) { str * 2 },
+          false,
+        ].each { |value| described_class.body_prettifier = value }
+      end
+    end
+
+    context 'when new value is invalid' do
+      it 'raises error' do
+        [
+          1,
+          :invalid,
+          Object.new,
+        ].each do |value|
+          expect { described_class.body_prettifier = value }.to raise_error
+        end
+      end
+    end
+  end
 end

@@ -25,7 +25,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.1.0'
   spec.add_development_dependency 'thread_safe', '~> 0.3.4'
   spec.add_development_dependency 'activesupport', '~> 4.1.6'
-  spec.add_development_dependency 'pry', '~> 0.10.1'
-  spec.add_development_dependency 'pry-byebug', '~> 2.0.0'
-  spec.add_development_dependency 'pry-coolline', '~> 0.2.5'
 end

@@ -32,8 +32,6 @@ client = Elastics::Client.new(options)
 #   :host   - hostname with port or array with hosts (default 127.0.0.1:9200)
 #   :index  - (default index)
 #   :type   - (default type)
-#   :connect_timeout    - timeout to mark the host as dead in cluster-mode (default 10)
-#   :resurrect_timeout  - timeout to mark dead host as alive in cluster-mode (default 10)
 
 # basic request
 client.request(params)
@@ -224,6 +222,25 @@ Elastics::Instrumentation.body_prettifier = true
 #   :pp  - pretty_print
 #   Proc - ->(str) { your_prettifier(str) }
 ```
+
+### Connecting to cluster
+When you pass array in `:host` option to initializer, client will work in cluster mode.
+There are some options for this mode:
+- `:connect_timeout`    - timeout to mark the host as dead in cluster-mode (default 10)
+- `:resurrect_timeout`  - timeout to mark dead host as alive in cluster-mode (default 60)
+- `:discover`           - enable nodes discovering
+
+##### Note about nodes discovering
+Client will perform requests to discover nodes with enabled http module. After
+discovering hosts will be overwritten with discovered ones.
+
+`discover: true` will keep you from editing config too frequently,
+but keep in mind that you should set enough hosts explicitly, so that discover
+will be able to continue if some of hosts are down.
+Also this is performed automaticaly only once, when client is initialized.
+It will not track nodes that go online after client was instantiated. Anyway you
+still can call `.discover_cluster` whenever you want, or just restart app when
+you add more nodes.
 
 ### Use with capistrano
 Add following lines to your `deploy.rb` and all rake tasks will be available in cap.

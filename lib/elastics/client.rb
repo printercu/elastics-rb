@@ -14,15 +14,15 @@ module Elastics
     attr_reader :client
 
     def initialize(defaults = {})
+      @index  = defaults[:index]
+      @type   = defaults[:type]
+      @client = HTTPClient.new
       if defaults[:host].is_a?(Array)
         extend Cluster
         initialize_cluster(defaults)
       else
         @host = defaults[:host] || '127.0.0.1:9200'
       end
-      @index  = defaults[:index]
-      @type   = defaults[:type]
-      @client = HTTPClient.new
     end
 
     def debug!(dev = STDOUT)
@@ -133,7 +133,7 @@ module Elastics
       # You probably don't want to use this method directly.
       def http_request(method, path, query, body, params = nil, host = @host)
         uri = "http://#{host}#{path}"
-        @client.request(method, uri, query, body, HEADERS)
+        client.request(method, uri, query, body, HEADERS)
       end
   end
 end

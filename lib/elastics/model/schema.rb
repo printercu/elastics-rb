@@ -9,7 +9,7 @@ module Elastics
       end
 
       def elastics_type_name
-        @elastics_type_name ||= name.to_s
+        @elastics_type_name ||= name.split('::').last.downcase
       end
 
       def reset_elastics_index_name

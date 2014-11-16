@@ -68,8 +68,6 @@ client.bulk(params) do |bulk|
 end
 ```
 
-When using cluster-mode you should also install `gem 'thread_safe'`.
-
 ### Models
 Most of ActiveRecord integration functionality is available for plain ruby.
 
@@ -77,8 +75,9 @@ Most of ActiveRecord integration functionality is available for plain ruby.
 class User
   include Elastics::Model
 
+  # set connection config, check 'configure section' for available options
   self.elastics_config = {host: 'hostname:port'}
-  # set base & version manager will manage aliases
+  # set index base and version manager will manage aliases
   self.elastics_index_base = 'user'
   self.elastics_type_name = 'user'
 end
@@ -230,6 +229,8 @@ There are some options for this mode:
 - `:resurrect_timeout`  - timeout to mark dead host as alive in cluster-mode (default 60)
 - `:discover`           - enable nodes discovering
 
+In plain ruby you should also install `thread_safe` gem.
+
 ##### Note about nodes discovering
 Client will perform requests to discover nodes with enabled http module. After
 discovering hosts will be overwritten with discovered ones.
@@ -241,6 +242,10 @@ Also this is performed automaticaly only once, when client is initialized.
 It will not track nodes that go online after client was instantiated. Anyway you
 still can call `.discover_cluster` whenever you want, or just restart app when
 you add more nodes.
+
+### Thread-safety
+Elastics designed to be thread-safe. It should be ok to have single client instance
+for the whole application.
 
 ### Use with capistrano
 Add following lines to your `deploy.rb` and all rake tasks will be available in cap.

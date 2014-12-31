@@ -1,5 +1,5 @@
 module Elastics
-  VERSION = '0.3.0'
+  VERSION = '0.4.0'
 
   def self.gem_version
     Gem::Version.new VERSION

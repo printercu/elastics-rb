@@ -26,8 +26,32 @@ module Elastics
           flatten.sort.
           each_with_object({}) do |file, hash|
             name = File.basename file, '.yml'
-            hash[name] = YAML.load_file(file)
+            hash[name] = fix_mapping(name, YAML.load_file(file))
           end
+      end
+
+      # Adds missing type name in the top-level and updates properties definition.
+      # It allows to write
+      #
+      #     properties:
+      #       name: string
+      #       project_id: integer
+      #
+      # instead of
+      #
+      #     task:
+      #       properties:
+      #         name:
+      #           type: string
+      #         project_id:
+      #           type: integer
+      def fix_mapping(name, mapping)
+        mapping = {name => mapping} unless mapping.keys == [name]
+        properties = mapping[name]['properties']
+        properties && properties.each do |field, val|
+          properties[field] = {type: val} if val.is_a?(String)
+        end
+        mapping
       end
 
       def types

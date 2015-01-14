@@ -10,26 +10,23 @@ module Elastics
       end
 
       module ClassMethods
+        # Performs `_search` request on type and instantiates result object.
+        # SearchResult is a default result class. It can be overriden with
+        # :result_class option.
         def search_elastics(data = {}, options = {})
-          request = {
-            id:   :_search,
-            body: data,
-          }
-          if routing = options[:routing]
-            request[:query] = {routing: routing}
-          end
-          SearchResult.new self, request_elastics(request), options
+          options[:result_class] ||= SearchResult
+          options[:model] = self
+          super
         end
 
+        # Finds items by ids and returns array in the order in which ids were given.
+        # Every missing record is replaced with `nil` in the result.
         def find_all_ordered(ids)
           items_by_id = where(id: ids).index_by(&:id)
           ids.map { |i| items_by_id[i] }
         end
 
-        def elastics_mapping
-          request_elastics(method: :get, id: :_mapping)
-        end
-
+        # Indexes all records in current scope.
         def index_all_elastics(*args)
           find_in_batches(*args) do |batch|
             index_batch_elastics(batch)

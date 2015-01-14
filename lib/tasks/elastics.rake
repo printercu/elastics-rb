@@ -29,11 +29,11 @@ namespace 'elastics' do
 
   desc 'Creates indices and applies mappings. Full migration when param is present'
   task migrate: :load_config do
-    if ENV['full']
-      Elastics::Tasks.migrate! @elastics_options
-    else
-      Elastics::Tasks.migrate @elastics_options
-    end
+    Elastics::Tasks.migrate @elastics_options
+  end
+
+  task migrate!: :load_config do
+    Elastics::Tasks.migrate! @elastics_options
   end
 
   desc 'Reindex'

@@ -21,18 +21,37 @@ module Elastics
           }
         end
 
+        # Proxies #request method to elastics client with specified index & type.
         def request_elastics(params)
           elastics.request(elastics_params.merge!(params))
         end
 
+        # Proxies #bulk method to elastics client with specified index & type.
         def bulk_elastics(params = {}, &block)
           elastics.bulk(elastics_params.merge!(params), &block)
         end
 
+        # Performs `_search` request on type and instantiates result object.
+        # Result::Search is a default result class. It can be overriden with
+        # :result_class option.
+        def search_elastics(data = {}, options = {})
+          request = {
+            id:     :_search,
+            body:   data,
+          }
+          if routing = options[:routing]
+            request[:query] = {routing: routing}
+          end
+          result_class = options[:result_class] || Result::Search
+          result_class.new request_elastics(request), options
+        end
+
+        # Performs `_refresh` request on index.
         def refresh_elastics
           request_elastics(method: :post, type: nil, id: :_refresh)
         end
 
+        # Indexes given records using batch API.
         def index_batch_elastics(batch)
           bulk_elastics do |bulk|
             batch.each do |record|
@@ -41,8 +60,20 @@ module Elastics
           end
         end
 
+        # Reindexes all records. It requires #find_in_batches method to be defined.
         def reindex_elastics(options = {})
-          raise 'Not implemented'
+          find_in_batches(options) do |batch|
+            index_batch_elastics(batch)
+          end
+        end
+
+        # Deletes all records in type keeping its mapping using "Delete by query" API.
+        def clear_elastics
+          request_elastics method: :delete, id: :_query, body: {query: {match_all: {}}}
+        end
+
+        def elastics_mapping
+          request_elastics(id: :_mapping)
         end
       end
 

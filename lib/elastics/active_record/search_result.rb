@@ -1,8 +1,8 @@
 module Elastics
   module ActiveRecord
     class SearchResult < Result::Search
-      def initialize(model, response, options = {})
-        @model = model
+      def initialize(response, options = {})
+        @model = options[:model]
         super response, options
       end
 

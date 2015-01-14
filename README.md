@@ -171,7 +171,7 @@ creates index with settings for each file from `indices` folder.
 - `rake elastics:migrate` (`.migrate`)
 puts mappings from `mappings` folder.
 
-- `rake elastics:migrate full=true` (`.migrate!`)
+- `rake elastics:migrate!` (`.migrate!`)
 performs full migration.
 
 - `rake elastics:reindex` (`.reindex`)

@@ -21,8 +21,10 @@ module Elastics
 
         # Finds items by ids and returns array in the order in which ids were given.
         # Every missing record is replaced with `nil` in the result.
-        def find_all_ordered(ids)
-          items_by_id = where(id: ids).index_by(&:id)
+        # If `conditions_present` is `true` it doesn't add where clause.
+        def find_all_ordered(ids, conditions_present = false)
+          relation = conditions_present ? where(id: ids) : self
+          items_by_id = relation.index_by(&:id)
           ids.map { |i| items_by_id[i] }
         end
 

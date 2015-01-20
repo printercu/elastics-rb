@@ -101,8 +101,15 @@ end
 User.elastics # Elastics::Client instance
 User.elastics_params # hash with index & type values for the model
 User.request_elastics(params) # performs request merging params with elastics_params
-User.search_elastics(data)
+
+search = User.search_elastics(data)
 # Returns Elastics::ActiveRecord::SearchResult object with some useful methods
+search.relation # User.where(id: found_ids)
+search.collection # Array of users sorted as in elastics response
+
+# Set scope applied to relation:
+search = Project.search_elastics(data, scope: ->(s) { s.includes(:user) })
+search.collection.first.user # eagger-loaded
 
 # Indexing on create/update can be skipped with skip_elastics
 User.skip_elastics { users.each { |x| x.update_attributes(smth: 'not indexed') } }

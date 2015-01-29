@@ -38,7 +38,10 @@ module Elastics
     private
       def install_elastics_hooks(hooks)
         if hooks.include?(:update)
-          after_commit :index_elastics, on: [:create, :update], unless: :skip_elastics?
+          after_commit :index_elastics,
+            on:     [:create, :update],
+            unless: :skip_elastics?,
+            if:     -> { previous_changes.any? }
         end
         if hooks.include?(:destroy)
           after_commit :delete_elastics, on: [:destroy], unless: :skip_elastics?

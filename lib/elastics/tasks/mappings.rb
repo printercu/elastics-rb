@@ -21,8 +21,39 @@ module Elastics
         end
       end
 
+      # Merges mappings from single files and dirs.
       def mappings
-        @mappings ||= mappings_paths.map { |path| Dir["#{path}/*.yml"] }.
+        @mappings ||= mappings_from_files.merge!(mappings_from_dirs)
+      end
+
+      # Reads mappings from single yml file.
+      #
+      #  user:
+      #    dynamic: false
+      #    properties:
+      #      name: string
+      #  tweet:
+      #    properties:
+      #      content: string
+      #      user_id: integer
+      def mappings_from_files
+        mappings_paths.each_with_object({}) do |path, hash|
+          file = "#{path}.yml"
+          next unless File.exists?(file)
+          YAML.load_file(file).each do |name, data|
+            hash[name] = fix_mapping(name, data)
+          end
+        end
+      end
+
+      # Reads mappings from separate files. Type name is taken from file name.
+      #
+      #  # user.yml
+      #  dynamic: false
+      #  properties:
+      #    name: string
+      def mappings_from_dirs
+        mappings_paths.map { |path| Dir["#{path}/*.yml"] }.
           flatten.sort.
           each_with_object({}) do |file, hash|
             name = File.basename file, '.yml'

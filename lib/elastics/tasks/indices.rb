@@ -11,8 +11,50 @@ module Elastics
         @indices_paths ||= base_paths.map { |x| File.join x, 'indices' }
       end
 
+      # Merges settings from single files and dirs.
       def indices_settings
-        @indices_settings ||= indices_paths.map { |path| Dir["#{path}/*.yml"] }.
+        @indices_settings ||= indices_from_files.merge!(indices_from_dirs)
+      end
+
+      # Reads indices settings from single yml file.
+      # Setting can be given specific for env or one for all envs.
+      #
+      #     tweet:
+      #       development:
+      #         settings:
+      #           number_of_shards: 5
+      #       production:
+      #         settings:
+      #           number_of_shards: 10
+      #
+      #     user:
+      #       settings:
+      #         number_of_shards: 5
+      def indices_from_files
+        indices_paths.each_with_object({}) do |path, hash|
+          file = "#{path}.yml"
+          next unless File.exists?(file)
+          YAML.load_file(file).each do |name, data|
+            hash[name] = data[Rails.env] || data
+          end
+        end
+      end
+
+      # Reads indices settings from separate files. Index name is taken from
+      # file name, setting can be given specific for env or one for all envs.
+      #
+      #     development:
+      #       settings:
+      #         number_of_shards: 5
+      #     production:
+      #       settings:
+      #         number_of_shards: 10
+      #
+      #     # or
+      #     settings:
+      #       number_of_shards: 1
+      def indices_from_dirs
+        indices_paths.map { |path| Dir["#{path}/*.yml"] }.
           flatten.sort.
           each_with_object({}) do |file, hash|
             name = File.basename file, '.yml'

@@ -26,11 +26,11 @@ module Elastics
     end
 
     def debug!(dev = STDOUT)
-      @client.debug_dev = dev
+      client.debug_dev = dev
     end
 
     def debug_off!
-      @client.debug_dev = nil
+      client.debug_dev = nil
     end
 
     def set_index(index, type = nil)

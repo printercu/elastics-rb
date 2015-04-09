@@ -13,11 +13,12 @@ module Elastics
       end
 
       def reset_elastics_index_name
-        @elastics_index_name = if superclass.respond_to?(:elastics_index_name)
-          superclass.elastics_index_name
-        else
-          compute_elastics_index_name
-        end
+        @elastics_index_name =
+          if respond_to?(:superclass) && superclass.respond_to?(:elastics_index_name)
+            superclass.elastics_index_name
+          else
+            compute_elastics_index_name
+          end
       end
 
       def compute_elastics_index_name

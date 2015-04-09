@@ -20,7 +20,7 @@ module Elastics
   #       def query_filters
   #         [
   #           {term: {published: true}},
-  #           terms_array_query(:tag, @params[:tags], execution: :and),
+  #           terms_array_query(:tag, params[:tags], execution: :and),
   #           some_complex_filter,
   #         ]
   #       end

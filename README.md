@@ -143,6 +143,8 @@ production:
     index_prefix: app_
 ```
 
+YAML is passed througn ERB before parsing.
+
 #### Create mappings & import data
 ```
 $ rake elastics:migrate elastics:reindex

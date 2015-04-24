@@ -10,6 +10,7 @@ namespace 'elastics' do
       types:    ENV['types'] && ENV['types'].split(',').map(&:strip),
       indices:  args.extras.empty? ? nil : args.extras
     }
+    Elastics::Tasks.verbose = ENV.fetch('VERBOSE', 'true') == 'true'
   end
 
   desc 'Drop administrative index'

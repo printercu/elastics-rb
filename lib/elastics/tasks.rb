@@ -1,3 +1,5 @@
+require 'yaml'
+require 'erb'
 require 'active_support'
 require 'active_support/core_ext'
 
@@ -23,7 +25,21 @@ module Elastics
     extend self
 
     def log(*args)
-      puts(*args)
+      puts(*args) if verbose
+      Rails.logger.info { "Elastics: #{args.join ' '}" } if defined?(Rails)
+    end
+
+    attr_accessor :verbose
+
+    def suppress_messages
+      verbose_was, self.verbose = verbose, false
+      yield
+    ensure
+      self.verbose = verbose_was
+    end
+
+    def load_yaml(file)
+      YAML.load(ERB.new(File.read(file)).result)
     end
 
     private

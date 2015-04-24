@@ -12,6 +12,7 @@ module Elastics
   autoload :Result,           'elastics/result'
   autoload :Tasks,            'elastics/tasks'
   autoload :VersionManager,   'elastics/version_manager'
+  autoload :RSpec,            'elastics/rspec'
 end
 
 require 'elastics/railtie' if defined?(Rails)

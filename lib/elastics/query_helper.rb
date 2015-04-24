@@ -24,7 +24,7 @@ module Elastics
     # for specified field.
     def terms_query(field, val, options = {})
       if val.is_a?(Array)
-        {terms: {field => val}.merge(options)}
+        {terms: {field => val}.merge!(options)}
       else
         {term: {field => val}}
       end

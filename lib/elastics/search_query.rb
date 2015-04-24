@@ -93,7 +93,7 @@ module Elastics
       when Hash   then val.map { |x| Hash[[x]] }
       when Array  then val
       else val ? [val] : []
-      end || []
+      end
     end
   end
 end

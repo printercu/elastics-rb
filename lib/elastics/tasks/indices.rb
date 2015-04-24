@@ -34,7 +34,7 @@ module Elastics
         indices_paths.each_with_object({}) do |path, hash|
           file = "#{path}.yml"
           next unless File.exists?(file)
-          YAML.load_file(file).each do |name, data|
+          load_yaml(file).each do |name, data|
             hash[name] = data[Rails.env] || data
           end
         end
@@ -58,7 +58,7 @@ module Elastics
           flatten.sort.
           each_with_object({}) do |file, hash|
             name = File.basename file, '.yml'
-            data = YAML.load_file(file)
+            data = load_yaml(file)
             hash[name] = data[Rails.env] || data
           end
       end

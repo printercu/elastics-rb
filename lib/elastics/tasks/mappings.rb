@@ -40,7 +40,7 @@ module Elastics
         mappings_paths.each_with_object({}) do |path, hash|
           file = "#{path}.yml"
           next unless File.exists?(file)
-          YAML.load_file(file).each do |name, data|
+          load_yaml(file).each do |name, data|
             hash[name] = fix_mapping(name, data)
           end
         end
@@ -57,7 +57,7 @@ module Elastics
           flatten.sort.
           each_with_object({}) do |file, hash|
             name = File.basename file, '.yml'
-            hash[name] = fix_mapping(name, YAML.load_file(file))
+            hash[name] = fix_mapping(name, load_yaml(file))
           end
       end
 

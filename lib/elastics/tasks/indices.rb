@@ -118,10 +118,14 @@ module Elastics
         new_versions = {}
         post_aliases options do |index|
           new_versions[index] = version_manager.next_version index
-          [
-            alias_action(:remove, index, :current),
-            alias_action(:add, index, :next),
-          ]
+          if client.index_exists?(versioned_index_name(index, :current))
+            [
+              alias_action(:remove, index, :current),
+              alias_action(:add, index, :next),
+            ]
+          else
+            alias_action(:add, index, :next)
+          end
         end
         drop_indices(options.merge version: :current) if options.fetch(:drop, true)
         new_versions.each do |index, version|

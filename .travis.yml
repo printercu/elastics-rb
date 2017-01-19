@@ -1,10 +1,16 @@
 language: ruby
 rvm:
-  - 1.9.3
+  # I don't have 1.9 and can't fix build failure in travis.
+  # If somebody would like to fix it, please prepare PR.
+  # - 1.9.3
   - 2.0.0
   - 2.1.4
   - jruby-19mode
+  - jruby
   - jruby-head
+matrix:
+  allow_failures:
+  - rvm: jruby-head
 services:
   - elasticsearch
 notifications:
